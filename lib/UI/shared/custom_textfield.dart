@@ -14,6 +14,8 @@ class CustomTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextInputAction textInputAction;
   final TextInputType keyboardType;
+  final double radius;
+  final bool searchBar;
 
   CustomTextField({
     this.errorText,
@@ -22,8 +24,10 @@ class CustomTextField extends StatefulWidget {
     this.inputFormatters,
     this.onChanged,
     this.controller,
+    this.radius = 8,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
+    this.searchBar = false,
     this.enabled = true,
     this.obscureText = false,
   });
@@ -54,44 +58,67 @@ class _CustomTextFieldState extends State<CustomTextField> {
         autocorrect: true,
         onChanged: widget.onChanged,
         controller: widget.controller,
-        style: Theme.of(context).textTheme.headline1!.copyWith(color: Colors.black, fontSize: Adapt.px(15)),
+        style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: Adapt.px(15)),
         obscureText: obscure,
-        cursorColor: Colors.black,
+        cursorColor: Theme.of(context).primaryColor,
         decoration: InputDecoration(
+          filled: true,
+          fillColor: Theme.of(context).cardColor,
+          prefixIcon: widget.searchBar
+              ? Icon(
+                  CupertinoIcons.search,
+                  color: Theme.of(context).hintColor,
+                  size: Adapt.px(16),
+                )
+              : null,
           errorText: widget.errorText,
-          labelText: widget.hint,
+          hintText: widget.hint,
           contentPadding: EdgeInsets.all(Adapt.px(6)),
           errorStyle: Theme.of(context).textTheme.headline1!.copyWith(fontSize: Adapt.px(12), color: Colors.red),
-          labelStyle: Theme.of(context)
+          hintStyle: Theme.of(context)
               .textTheme
               .headline1!
               .copyWith(fontSize: Adapt.px(12), color: Theme.of(context).hintColor),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(Adapt.px(8))),
+            borderRadius: BorderRadius.all(Radius.circular(Adapt.px(widget.radius))),
             borderSide: BorderSide(
-              color: Theme.of(context).hintColor,
-              width: 1,
+              color: Colors.transparent,
+              width: 0,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(Adapt.px(8))),
+            borderRadius: BorderRadius.all(Radius.circular(Adapt.px(widget.radius))),
             borderSide: BorderSide(
-              color: Theme.of(context).primaryColor,
-              width: 1,
+              color: Colors.transparent,
+              width: 0,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(Adapt.px(widget.radius))),
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 0,
+            ),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(Adapt.px(widget.radius))),
+            borderSide: BorderSide(
+              color: Colors.transparent,
+              width: 0,
             ),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(Adapt.px(8))),
+            borderRadius: BorderRadius.all(Radius.circular(Adapt.px(widget.radius))),
             borderSide: BorderSide(
-              color: Theme.of(context).hintColor,
-              width: 1,
+              color: Colors.transparent,
+              width: 0,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(Adapt.px(8))),
+            borderRadius: BorderRadius.all(Radius.circular(Adapt.px(widget.radius))),
             borderSide: BorderSide(
-              color: Theme.of(context).hintColor,
-              width: 1,
+              color: Colors.transparent,
+              width: 0,
             ),
           ),
         ),

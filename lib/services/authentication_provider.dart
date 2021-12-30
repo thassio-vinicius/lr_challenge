@@ -47,6 +47,10 @@ class AuthenticationProvider {
     }
   }
 
+  Future<void> signOut() async {
+    await firebaseAuth!.signOut();
+  }
+
   _userCreate({
     required String email,
     required String uid,

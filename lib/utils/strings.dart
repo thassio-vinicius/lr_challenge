@@ -4,8 +4,10 @@ class Strings {
   static const String addTask = 'Add Task';
   static const String highPriority = 'High Priority';
   static const String lowPriority = 'Low Priority';
+  static const String tasks = 'Tasks';
+  static const String completed = 'Completed';
   static const String normalPriority = 'Normal Priority';
-
+  static const String signOut = 'Sign out';
   static const String privacyPolicy = 'privacy policy';
   static const String confirm = 'Confirm';
   static const String termsConditions = "terms & conditions & ReNest's advice";
@@ -15,29 +17,24 @@ class Strings {
   static const String createAcc = 'Create a new account';
   static const String alreadyHaveAcc = 'Already have an account?';
   static const String signIn = 'Sign in to your account';
+  static const String search = 'Search';
   static const String continueWith = "Continue with ";
   static const String signUp = "Sign up";
   static const String password = "password";
   static const String or = "Or";
   static const String haveAccount = "Already have an account?";
   static const String noAccount = "Doesn't have an account?";
-  static const String verifyAccount = 'To access eargym please verify your account';
   static const String verificationSent = 'A verification email was sent to';
   static const String checkInbox = 'Check your inbox to complete verification.';
   static const String didntReceiveEmail = 'Didn\'t receive an email?';
   static const String resendEmail = 'Resend verification Email';
   static const String verificationSuccess = 'Verification successful!';
-  static const String verificationSuccessDesc =
-      'You’re all set. Continue to start your journey of hearing discovery and training.';
   static const String login = "Log in";
   static const String select = "Select";
-  static const String termsPrivacy = "By continuing you agree to eargym’s terms & conditions and privacy policy";
   static const String name = "Name";
   static const String emailHint = "Email Address";
   static const String passwordHint = "Password";
   static const String confirmPasswordHint = "Confirm Password";
-  static const String genderHint = "Gender";
-  static const String yearHint = "How old are you?";
   static const String signUpConfirm = "Create Account";
   static const String signUpFailed = "Error with Account Creation";
   static const String signInTitle = "Create your Account";
@@ -51,8 +48,6 @@ class Strings {
   static const String invalidDisplayNameTooShort = "Full Name can't be less than 3 characters";
   static const String invalidDisplayNameEmpty = "Full Name can't be empty";
   static const String invalidPasswordEmpty = "Password can't be empty";
-  static const String invalidGenderRequired = "Gender is required";
-  static const String invalidYearRequired = "Year is required";
   static const String invalidPasswordTooShort = "Password can't be less than 6 characters";
   static const String invalidEmailEmpty = "Email can't be empty";
   static const String invalidEmailErrorText = "Invalid Email";

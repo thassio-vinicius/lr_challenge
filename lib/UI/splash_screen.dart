@@ -1,13 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:lr_challenge/UI/home/home_screen.dart';
 import 'package:lr_challenge/UI/sign_in/authentication_screen.dart';
 import 'package:lr_challenge/utils/adapt.dart';
 import 'package:lr_challenge/utils/custom_faderoute.dart';
 import 'package:lr_challenge/utils/strings.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  final bool loggedIn;
+  const SplashScreen(this.loggedIn, {Key? key}) : super(key: key);
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -43,7 +45,9 @@ class _SplashScreenState extends State<SplashScreen> {
             onEnd: () {
               if (opacity == 0) {
                 Navigator.pushReplacement(
-                    context, CustomFadeRoute(child: AuthenticationScreen(), routeName: 'authscreen'));
+                    context,
+                    CustomFadeRoute(
+                        child: widget.loggedIn ? HomeScreen() : AuthenticationScreen(), routeName: 'authscreen'));
               }
             },
             child: Text(

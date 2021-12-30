@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lr_challenge/models/task.dart';
+import 'package:lr_challenge/services/firestore_provider.dart';
 import 'package:lr_challenge/utils/adapt.dart';
 import 'package:lr_challenge/utils/hexcolor.dart';
 import 'package:lr_challenge/utils/images.dart';
 import 'package:lr_challenge/utils/strings.dart';
+import 'package:provider/provider.dart';
 
 class TaskTile extends StatefulWidget {
   final String title;
@@ -21,8 +24,8 @@ class _TaskTileState extends State<TaskTile> {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Adapt.px(6)),
       child: Container(
-        decoration:
-            BoxDecoration(color: HexColor('#F4F7FA'), borderRadius: BorderRadius.all(Radius.circular(Adapt.px(10)))),
+        decoration: BoxDecoration(
+            color: Theme.of(context).cardColor, borderRadius: BorderRadius.all(Radius.circular(Adapt.px(10)))),
         padding: EdgeInsets.all(Adapt.px(10)),
         child: AnimatedCrossFade(
           duration: kThemeAnimationDuration,
@@ -82,7 +85,12 @@ class _TaskTileState extends State<TaskTile> {
     return Flexible(
       flex: 3,
       child: GestureDetector(
-        onTap: () {},
+        onTap: () async {
+          await Provider.of<FirestoreProvider>(context, listen: false)
+              .addTask(Task(priority: priority, title: widget.title));
+
+          Navigator.of(context).pop();
+        },
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: Adapt.px(6)),
           child: Container(

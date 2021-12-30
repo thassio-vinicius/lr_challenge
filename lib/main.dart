@@ -39,14 +39,24 @@ class ReNest extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        home: SplashScreen(),
+        home: StreamBuilder(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done ||
+                  snapshot.connectionState == ConnectionState.active)
+                return SplashScreen(snapshot.hasData);
+              else
+                return Container();
+            }),
         theme: ThemeData(
-            textTheme: TextTheme(
-              headline1: GoogleFonts.inter(color: HexColor('#32315C'), fontSize: Adapt.px(18)),
-              headline2:
-                  GoogleFonts.inter(color: HexColor('#32315C'), fontSize: Adapt.px(26), fontWeight: FontWeight.bold),
-            ),
-            primaryColor: HexColor('32315C')),
+          textTheme: TextTheme(
+            headline1: GoogleFonts.inter(color: HexColor('#32315C'), fontSize: Adapt.px(18)),
+            headline2:
+                GoogleFonts.inter(color: HexColor('#32315C'), fontSize: Adapt.px(26), fontWeight: FontWeight.bold),
+          ),
+          primaryColor: HexColor('32315C'),
+          cardColor: HexColor('F4F7FA'),
+        ),
       ),
     );
   }
