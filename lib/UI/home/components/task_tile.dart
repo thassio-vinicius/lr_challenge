@@ -53,15 +53,22 @@ class _TaskTileState extends State<TaskTile> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Flexible(
-                    child: Text(widget.title,
-                        style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: Adapt.px(18)))),
-                IconButton(
-                  icon: Image(image: AssetImage(Images.addIcon), color: Theme.of(context).primaryColor),
-                  onPressed: () => setState(() {
-                    print('tap ' + showFirst.toString());
+                    flex: 8,
+                    child: FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(widget.title,
+                          maxLines: 1, style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: Adapt.px(18))),
+                    )),
+                Flexible(
+                  flex: 2,
+                  child: IconButton(
+                    icon: Image(image: AssetImage(Images.addIcon), color: Theme.of(context).primaryColor),
+                    onPressed: () => setState(() {
+                      print('tap ' + showFirst.toString());
 
-                    showFirst = false;
-                  }),
+                      showFirst = false;
+                    }),
+                  ),
                 ),
               ],
             ),
