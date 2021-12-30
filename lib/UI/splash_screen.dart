@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:lr_challenge/UI/home/home_screen.dart';
+import 'package:lr_challenge/UI/sign_in/authentication_screen.dart';
 import 'package:lr_challenge/utils/adapt.dart';
 import 'package:lr_challenge/utils/custom_faderoute.dart';
 import 'package:lr_challenge/utils/strings.dart';
@@ -42,7 +42,8 @@ class _SplashScreenState extends State<SplashScreen> {
             duration: Duration(milliseconds: 750),
             onEnd: () {
               if (opacity == 0) {
-                Navigator.pushReplacement(context, CustomFadeRoute(child: HomeScreen(), routeName: 'home'));
+                Navigator.pushReplacement(
+                    context, CustomFadeRoute(child: AuthenticationScreen(), routeName: 'authscreen'));
               }
             },
             child: Text(

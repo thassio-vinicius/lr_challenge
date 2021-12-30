@@ -13,7 +13,8 @@ class TaskTile extends StatefulWidget {
 }
 
 class _TaskTileState extends State<TaskTile> {
-  bool showFirst = false;
+  bool showFirst = true;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,46 +26,52 @@ class _TaskTileState extends State<TaskTile> {
         padding: EdgeInsets.all(Adapt.px(10)),
         child: AnimatedCrossFade(
           duration: kThemeAnimationDuration,
-          crossFadeState: showFirst == false ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-          secondChild: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              priorityCard(Strings.highPriority.replaceAll(' ', '\n'), '#FF2765'),
-              priorityCard(Strings.normalPriority.replaceAll(' ', '\n'), '#48CE00'),
-              priorityCard(Strings.lowPriority.replaceAll(' ', '\n'), '#4196EA'),
-              IconButton(
-                icon: Image(image: AssetImage(Images.closeIcon), color: Theme.of(context).primaryColor.withOpacity(.5)),
-                onPressed: () => setState(() {
-                  print('tap ' + showFirst.toString());
-                  showFirst = false;
-                }),
-              ),
-            ],
-          ),
-          firstChild: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                  child: Text(widget.title,
-                      style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: Adapt.px(18)))),
-              IconButton(
-                icon: Image(image: AssetImage(Images.addIcon), color: Theme.of(context).primaryColor),
-                onPressed: () => setState(() {
-                  print('tap ' + showFirst.toString());
+          crossFadeState: isLoading ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+          firstChild: CircularProgressIndicator(),
+          secondChild: AnimatedCrossFade(
+            duration: kThemeAnimationDuration,
+            crossFadeState: showFirst ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+            secondChild: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                priorityCard(Strings.highPriority.replaceAll(' ', '\n'), 2),
+                priorityCard(Strings.normalPriority.replaceAll(' ', '\n'), 1),
+                priorityCard(Strings.lowPriority.replaceAll(' ', '\n'), 0),
+                IconButton(
+                  icon:
+                      Image(image: AssetImage(Images.closeIcon), color: Theme.of(context).primaryColor.withOpacity(.5)),
+                  onPressed: () => setState(() {
+                    print('tap ' + showFirst.toString());
+                    showFirst = true;
+                  }),
+                ),
+              ],
+            ),
+            firstChild: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Flexible(
+                    child: Text(widget.title,
+                        style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: Adapt.px(18)))),
+                IconButton(
+                  icon: Image(image: AssetImage(Images.addIcon), color: Theme.of(context).primaryColor),
+                  onPressed: () => setState(() {
+                    print('tap ' + showFirst.toString());
 
-                  showFirst = true;
-                }),
-              ),
-            ],
+                    showFirst = false;
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  priorityCard(String title, String color) {
+  priorityCard(String title, int priority) {
     return Flexible(
       flex: 3,
       child: GestureDetector(
@@ -73,7 +80,7 @@ class _TaskTileState extends State<TaskTile> {
           padding: EdgeInsets.symmetric(horizontal: Adapt.px(6)),
           child: Container(
             decoration: BoxDecoration(
-              color: HexColor(color),
+              color: priorityColor(priority),
               borderRadius: BorderRadius.all(
                 Radius.circular(Adapt.px(10)),
               ),
@@ -90,5 +97,22 @@ class _TaskTileState extends State<TaskTile> {
         ),
       ),
     );
+  }
+
+  Color priorityColor(int priority) {
+    late Color color;
+
+    switch (priority) {
+      case 0:
+        color = HexColor('4196EA');
+        break;
+      case 1:
+        color = HexColor('48CE00');
+        break;
+      case 2:
+        color = HexColor('#FF2765');
+        break;
+    }
+    return color;
   }
 }
