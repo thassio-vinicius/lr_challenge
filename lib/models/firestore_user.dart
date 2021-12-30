@@ -58,7 +58,7 @@ class FirestoreUser {
         'name': this.name,
         'email': this.email,
         'uid': this.uid,
-        'tasks': this.tasks.map((e) => e.toJson()),
+        'tasks': this.tasks.isEmpty ? [] : this.tasks.map((e) => e.toJson()),
         'privacyPolicy': this.privacyPolicy,
         'termsNConditions': this.termsNConditions
       };

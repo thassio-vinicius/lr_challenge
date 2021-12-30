@@ -25,6 +25,7 @@ class _TaskCardState extends State<TaskCard> {
     return Padding(
       padding: EdgeInsets.all(Adapt.px(8)),
       child: Container(
+        height: Adapt().hp(10),
         decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
         padding: EdgeInsets.all(Adapt.px(8)),
         child: Row(
@@ -40,7 +41,7 @@ class _TaskCardState extends State<TaskCard> {
                     task.completed = value!;
                   });
 
-                  widget.onPressed;
+                  widget.onPressed!();
                 },
                 shape: RoundedRectangleBorder(
                   side: BorderSide(color: Theme.of(context).primaryColor.withOpacity(.5)),

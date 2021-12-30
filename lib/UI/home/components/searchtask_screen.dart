@@ -9,10 +9,6 @@ import 'package:lr_challenge/utils/strings.dart';
 import 'package:provider/provider.dart';
 
 class SearchTaskScreen extends StatefulWidget {
-  final List<Task> tasks;
-
-  SearchTaskScreen(this.tasks);
-
   @override
   _SearchTaskScreenState createState() => _SearchTaskScreenState();
 }
@@ -20,8 +16,23 @@ class SearchTaskScreen extends StatefulWidget {
 class _SearchTaskScreenState extends State<SearchTaskScreen> {
   TextEditingController searchQueryController = TextEditingController();
   bool startedSearching = false;
+  late List<Task> tasks;
 
   List<Task> results = [];
+
+  Future<void> fetchTasks() async {
+    var list = await Provider.of<FirestoreProvider>(context, listen: false).userTasks();
+
+    setState(() {
+      tasks = list;
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    fetchTasks();
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,8 +188,7 @@ class _SearchTaskScreenState extends State<SearchTaskScreen> {
   }
 
   updateSearchQuery(String query) {
-    List<Task> list =
-        widget.tasks.where((element) => element.title.toLowerCase().contains(query.toLowerCase())).toList();
+    List<Task> list = tasks.where((element) => element.title.toLowerCase().contains(query.toLowerCase())).toList();
     setState(() {
       startedSearching = true;
       results = list;

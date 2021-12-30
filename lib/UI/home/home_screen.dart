@@ -25,25 +25,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late TabController tabController;
-  List<Task> tasks = [];
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    fetchTasks();
-    super.didChangeDependencies();
-  }
-
-  Future<void> fetchTasks() async {
-    var list = await Provider.of<FirestoreProvider>(context, listen: false).userTasks();
-
-    setState(() {
-      tasks = list;
-    });
   }
 
   @override
@@ -91,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       body: Column(
         children: [
           GestureDetector(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SearchTaskScreen(tasks))),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SearchTaskScreen())),
             child: CustomTextField(
               enabled: false,
               searchBar: true,
@@ -114,41 +99,40 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             indicator: UnderlineTabIndicator(borderSide: BorderSide(width: 1, color: Theme.of(context).primaryColor)),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                color: Theme.of(context).cardColor,
-                child: Padding(
-                  padding: EdgeInsets.all(Adapt.px(16)),
-                  child: StreamBuilder<FirestoreUser>(
-                      initialData: FirestoreUser(email: '', uid: '', privacyPolicy: true, termsNConditions: true),
-                      stream: Provider.of<FirestoreProvider>(context).currentUserStream(),
-                      builder: (context, snapshot) {
-                        switch (snapshot.connectionState) {
-                          case ConnectionState.none:
-                            return Text("No Connections");
-                          case ConnectionState.waiting:
+            child: Container(
+              color: Theme.of(context).cardColor,
+              child: Padding(
+                padding: EdgeInsets.all(Adapt.px(16)),
+                child: StreamBuilder<FirestoreUser>(
+                    initialData: FirestoreUser(email: '', uid: '', privacyPolicy: true, termsNConditions: true),
+                    stream: Provider.of<FirestoreProvider>(context).currentUserStream(),
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.none:
+                          return Text("No Connections");
+                        case ConnectionState.waiting:
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: Theme.of(context).primaryColor,
+                            ),
+                          );
+                        case ConnectionState.active:
+                        case ConnectionState.done:
+                          if (snapshot.hasData) {
+                            if (snapshot.data!.tasks.isNotEmpty) {
+                              print(snapshot.data!.tasks.map((e) => e.toString()));
+                              return tasksView(snapshot.data!.tasks);
+                            } else {
+                              return noTasks();
+                            }
+                          } else
                             return Center(
                               child: CircularProgressIndicator(
                                 color: Theme.of(context).primaryColor,
                               ),
                             );
-                          case ConnectionState.active:
-                          case ConnectionState.done:
-                            if (snapshot.hasData) {
-                              if (snapshot.data!.tasks.isNotEmpty) {
-                                return tasksView(snapshot.data!.tasks);
-                              } else {
-                                return noTasks();
-                              }
-                            } else
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              );
-                        }
-                      }),
-                ),
+                      }
+                    }),
               ),
             ),
           )
@@ -161,18 +145,19 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     List<Task> lowPriority = tasks.where((element) => element.priority == 0).toList();
     List<Task> normalPriority = tasks.where((element) => element.priority == 1).toList();
     List<Task> highPriority = tasks.where((element) => element.priority == 2).toList();
+    List<Task> completed = tasks.where((element) => element.completed).toList();
 
     bool hasLow = lowPriority.isNotEmpty;
     bool hasNormal = normalPriority.isNotEmpty;
     bool hasHigh = highPriority.isNotEmpty;
+    bool hasCompleted = completed.isNotEmpty;
 
     return SizedBox(
-      height: Adapt().hp(10 * tasks.length),
-      child: TabBarView(controller: tabController, physics: NeverScrollableScrollPhysics(), children: [
+      height: Adapt().hp(150),
+      child: TabBarView(controller: tabController, children: [
         Padding(
           padding: EdgeInsets.only(top: Adapt.px(24)),
-          child: Column(
-            //physics: NeverScrollableScrollPhysics(),
+          child: ListView(
             children: [
               if (hasHigh) taskList(highPriority),
               if (hasNormal) taskList(normalPriority),
@@ -180,17 +165,23 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             ],
           ),
         ),
-        taskList(tasks.where((element) => element.completed).toList(), completedTasks: true),
+        if (hasCompleted)
+          taskList(tasks.where((element) => element.completed).toList(), completedTasks: true)
+        else
+          Container(),
       ]),
     );
   }
 
   Widget taskList(List<Task> tasks, {bool completedTasks = false}) {
+    print(tasks.toString());
+
     int priority = tasks.first.priority;
 
-    return Expanded(
+    return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (!completedTasks)
             Text(
@@ -200,13 +191,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   .headline2!
                   .copyWith(color: priorityColor(priority), fontSize: Adapt.px(14)),
             ),
-          Expanded(
+          SizedBox(
+            height: Adapt().hp(tasks.length > 1 ? 10 * tasks.length : 20),
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: Adapt.px(12)),
               child: Column(
                 children: tasks
                     .map(
-                      (e) => Flexible(
+                      (e) => Expanded(
                         child: TaskCard(
                           e,
                           onPressed: () async =>
