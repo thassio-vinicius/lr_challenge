@@ -11,6 +11,7 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
   final Function? onEditingComplete;
+  final void Function()? onSuffixPressed;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputAction textInputAction;
   final TextInputType keyboardType;
@@ -24,6 +25,7 @@ class CustomTextField extends StatefulWidget {
     this.inputFormatters,
     this.onChanged,
     this.controller,
+    this.onSuffixPressed,
     this.radius = 8,
     this.keyboardType = TextInputType.text,
     this.textInputAction = TextInputAction.next,
@@ -62,6 +64,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
         obscureText: obscure,
         cursorColor: Theme.of(context).primaryColor,
         decoration: InputDecoration(
+          suffixIcon: widget.searchBar
+              ? IconButton(
+                  icon: Transform.rotate(
+                    angle: 70,
+                    child: Icon(
+                      Icons.add_circle,
+                      color: Theme.of(context).primaryColor.withOpacity(.5),
+                    ),
+                  ),
+                  onPressed: widget.onSuffixPressed)
+              : null,
           filled: true,
           fillColor: Theme.of(context).cardColor,
           prefixIcon: widget.searchBar

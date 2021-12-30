@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lr_challenge/UI/home/components/addtask_screen.dart';
+import 'package:lr_challenge/UI/home/components/searchtask_screen.dart';
+import 'package:lr_challenge/UI/home/components/task_card.dart';
 import 'package:lr_challenge/UI/shared/custom_primarybutton.dart';
 import 'package:lr_challenge/UI/shared/custom_textfield.dart';
 import 'package:lr_challenge/UI/sign_in/authentication_screen.dart';
@@ -23,11 +25,25 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
   late TabController tabController;
-
+  List<Task> tasks = [];
   @override
   void initState() {
     tabController = TabController(length: 2, vsync: this);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    fetchTasks();
+    super.didChangeDependencies();
+  }
+
+  Future<void> fetchTasks() async {
+    var list = await Provider.of<FirestoreProvider>(context, listen: false).userTasks();
+
+    setState(() {
+      tasks = list;
+    });
   }
 
   @override
@@ -74,13 +90,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       ),
       body: Column(
         children: [
-          CustomTextField(
-            searchBar: true,
-            radius: 100,
-            hint: Strings.search,
-            onChanged: (input) {
-              //var results = tasks.where((element) => element.title == input).toList();
-            },
+          GestureDetector(
+
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SearchTaskScreen(tasks))),
+            child: CustomTextField(
+              enabled: false,
+              searchBar: true,
+              radius: 100,
+              hint: Strings.search,
+            ),
           ),
           TabBar(
             indicatorColor: Theme.of(context).primaryColor,
@@ -118,7 +136,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           case ConnectionState.active:
                           case ConnectionState.done:
                             if (snapshot.hasData) {
-                              return snapshot.data!.tasks.isNotEmpty ? tasksView(snapshot.data!.tasks) : noTasks();
+                              if (snapshot.data!.tasks.isNotEmpty) {
+                                return tasksView(snapshot.data!.tasks);
+                              } else {
+                                return noTasks();
+                              }
                             } else
                               return Center(
                                 child: CircularProgressIndicator(
@@ -179,11 +201,17 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         Padding(
           padding: EdgeInsets.symmetric(vertical: Adapt.px(12)),
           child: SizedBox(
-              height: Adapt().hp(tasks.length * 10),
-              child: ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index) => taskCard(tasks[index]))),
+            height: Adapt().hp(tasks.length * 10),
+            child: ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: tasks.length,
+              itemBuilder: (context, index) => TaskCard(
+                tasks[index],
+                onPressed: () async =>
+                    await Provider.of<FirestoreProvider>(context, listen: false).updateTask(tasks[index]),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -221,49 +249,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         break;
     }
     return color;
-  }
-
-  Widget taskCard(Task task) {
-    return Padding(
-      padding: EdgeInsets.all(Adapt.px(8)),
-      child: Container(
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(10))),
-        padding: EdgeInsets.all(Adapt.px(8)),
-        child: Row(
-          children: [
-            Transform.scale(
-              scale: 1.5,
-              child: Checkbox(
-                value: task.completed,
-                checkColor: Theme.of(context).primaryColor.withOpacity(.4),
-                activeColor: Theme.of(context).primaryColor.withOpacity(.05),
-                onChanged: (value) async {
-                  setState(() {
-                    task.completed = value!;
-                  });
-
-                  await Provider.of<FirestoreProvider>(context, listen: false).updateTask(task);
-                },
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Theme.of(context).primaryColor.withOpacity(.5)),
-                  borderRadius: BorderRadius.all(Radius.circular(100)),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: Adapt.px(10)),
-              child: Text(
-                task.title,
-                style: !task.completed
-                    ? Theme.of(context).textTheme.headline1
-                    : Theme.of(context).textTheme.headline1!.copyWith(
-                        color: Theme.of(context).primaryColor.withOpacity(.2), decoration: TextDecoration.lineThrough),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
   }
 
   Center noTasks() {

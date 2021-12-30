@@ -25,6 +25,15 @@ class FirestoreProvider {
     return FirestoreUser.fromMap(doc ?? {});
   }
 
+  Future<List<Task>> userTasks() async {
+    Map<String, dynamic>? doc = await fetchDocument(
+      documentPath: firebaseAuth.currentUser!.uid,
+      collectionPath: 'users',
+    );
+
+    return FirestoreUser.fromMap(doc ?? {}).tasks;
+  }
+
   Stream<FirestoreUser>? currentUserStream() {
     Stream<DocumentSnapshot> stream =
         fetchDocumentStream(collectionPath: 'users', documentPath: firebaseAuth.currentUser!.uid);

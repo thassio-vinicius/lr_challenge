@@ -8,6 +8,8 @@ class Strings {
   static const String completed = 'Completed';
   static const String normalPriority = 'Normal Priority';
   static const String signOut = 'Sign out';
+  static const String cancel = 'Cancel';
+  static const String noResults = 'No results found, please try again';
   static const String privacyPolicy = 'privacy policy';
   static const String confirm = 'Confirm';
   static const String termsConditions = "terms & conditions & ReNest's advice";
