@@ -38,13 +38,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       drawer: Drawer(
         child: ListView(
           children: [
-            CustomPrimaryButton(
-                onPressed: () async {
-                  await Provider.of<AuthenticationProvider>(context, listen: false).signOut();
+            Padding(
+              padding: EdgeInsets.all(Adapt.px(12)),
+              child: CustomPrimaryButton(
+                  onPressed: () async {
+                    await Provider.of<AuthenticationProvider>(context, listen: false).signOut();
 
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => AuthenticationScreen()));
-                },
-                label: Strings.signOut)
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => AuthenticationScreen()));
+                  },
+                  label: Strings.signOut),
+            )
           ],
         ),
       ),
