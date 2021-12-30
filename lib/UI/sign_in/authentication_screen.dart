@@ -259,10 +259,13 @@ class _EmailSignOptionScreenState extends State<_EmailSignOptionScreen> {
               )
             ],
           ),
-          Padding(
-            padding: EdgeInsets.only(top: Adapt.px(12)),
-            child: Text(Strings.alreadyHaveAcc,
-                style: Theme.of(context).textTheme.headline2!.copyWith(fontSize: Adapt.px(20))),
+          GestureDetector(
+            onTap: () => model.updateState(AuthenticationState.signIn),
+            child: Padding(
+              padding: EdgeInsets.only(top: Adapt.px(12)),
+              child: Text(Strings.alreadyHaveAcc,
+                  style: Theme.of(context).textTheme.headline2!.copyWith(fontSize: Adapt.px(20))),
+            ),
           ),
         ];
         break;
