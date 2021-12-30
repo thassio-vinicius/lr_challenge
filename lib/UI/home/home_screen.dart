@@ -91,7 +91,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       body: Column(
         children: [
           GestureDetector(
-
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SearchTaskScreen(tasks))),
             child: CustomTextField(
               enabled: false,
@@ -168,12 +167,12 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     bool hasHigh = highPriority.isNotEmpty;
 
     return SizedBox(
-      height: Adapt().hp(100),
-      child: TabBarView(controller: tabController, children: [
+      height: Adapt().hp(10 * tasks.length),
+      child: TabBarView(controller: tabController, physics: NeverScrollableScrollPhysics(), children: [
         Padding(
           padding: EdgeInsets.only(top: Adapt.px(24)),
-          child: ListView(
-            physics: NeverScrollableScrollPhysics(),
+          child: Column(
+            //physics: NeverScrollableScrollPhysics(),
             children: [
               if (hasHigh) taskList(highPriority),
               if (hasNormal) taskList(normalPriority),
@@ -186,34 +185,41 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     );
   }
 
-  Column taskList(List<Task> tasks, {bool completedTasks = false}) {
+  Widget taskList(List<Task> tasks, {bool completedTasks = false}) {
     int priority = tasks.first.priority;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (!completedTasks)
-          Text(
-            taskListTitle(priority),
-            style:
-                Theme.of(context).textTheme.headline2!.copyWith(color: priorityColor(priority), fontSize: Adapt.px(14)),
-          ),
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: Adapt.px(12)),
-          child: SizedBox(
-            height: Adapt().hp(tasks.length * 10),
-            child: ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: tasks.length,
-              itemBuilder: (context, index) => TaskCard(
-                tasks[index],
-                onPressed: () async =>
-                    await Provider.of<FirestoreProvider>(context, listen: false).updateTask(tasks[index]),
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!completedTasks)
+            Text(
+              taskListTitle(priority),
+              style: Theme.of(context)
+                  .textTheme
+                  .headline2!
+                  .copyWith(color: priorityColor(priority), fontSize: Adapt.px(14)),
+            ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: Adapt.px(12)),
+              child: Column(
+                children: tasks
+                    .map(
+                      (e) => Flexible(
+                        child: TaskCard(
+                          e,
+                          onPressed: () async =>
+                              await Provider.of<FirestoreProvider>(context, listen: false).updateTask(e),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

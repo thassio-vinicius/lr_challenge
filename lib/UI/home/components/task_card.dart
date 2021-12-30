@@ -48,14 +48,21 @@ class _TaskCardState extends State<TaskCard> {
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(left: Adapt.px(10)),
-              child: Text(
-                widget.task.title,
-                style: !widget.task.completed
-                    ? Theme.of(context).textTheme.headline1
-                    : Theme.of(context).textTheme.headline1!.copyWith(
-                        color: Theme.of(context).primaryColor.withOpacity(.2), decoration: TextDecoration.lineThrough),
+            Flexible(
+              child: Padding(
+                padding: EdgeInsets.only(left: Adapt.px(10)),
+                child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    widget.task.title,
+                    maxLines: 1,
+                    style: !widget.task.completed
+                        ? Theme.of(context).textTheme.headline1
+                        : Theme.of(context).textTheme.headline1!.copyWith(
+                            color: Theme.of(context).primaryColor.withOpacity(.2),
+                            decoration: TextDecoration.lineThrough),
+                  ),
+                ),
               ),
             )
           ],
