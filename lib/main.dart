@@ -48,6 +48,7 @@ class ReNest extends StatelessWidget {
               else
                 return Container();
             }),
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           textTheme: TextTheme(
             headline1: GoogleFonts.inter(color: HexColor('#32315C'), fontSize: Adapt.px(18)),
